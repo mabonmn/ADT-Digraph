@@ -19,6 +19,42 @@ public:
         adj[from].push_back(to);
     }
 
+    // Delete an edge from 'from' to 'to'.
+    void deleteEdge(int from, int to) {
+        adj[from].remove(to);
+    }
+
+    // Perform a depth-first search with cycle detection.
+    bool isCyclicDFS(int v, vector<bool>& visited, vector<bool>& recStack) {
+        if (!visited[v]) {
+            visited[v] = true;
+            recStack[v] = true;
+
+            for (int neighbor : adj[v]) {
+                if (!visited[neighbor] && isCyclicDFS(neighbor, visited, recStack)) {
+                    return true;
+                } else if (recStack[neighbor]) {
+                    return true;
+                }
+            }
+        }
+        recStack[v] = false;
+        return false;
+    }
+
+    // Check if the graph is acyclic using depth-first search.
+    bool isAcyclic() {
+        vector<bool> visited(V, false);
+        vector<bool> recStack(V, false);
+
+        for (int i = 0; i < V; i++) {
+            if (isCyclicDFS(i, visited, recStack)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     // Recursive function for topological sort.
     void topologicalSortUtil(int v, vector<bool>& visited, list<int>& result) {
         visited[v] = true;
@@ -45,12 +81,9 @@ public:
         return result;
     }
 
-    // Check if the graph is acyclic.
-    bool isAcyclic() {
-        list<int> result = topologicalSort();
-        return result.size() == V; // If the result size is equal to the number of vertices, it's acyclic.
-    }
+
 };
+
 
 int main() {
     int numTasks;
@@ -79,15 +112,60 @@ int main() {
         digraph.addEdge(from - 1, to - 1); // Adjust indices to be 0-based.
     }
 
-    if (digraph.isAcyclic()) {
-        cout << "Topological Sort Order:\n";
-        list<int> result = digraph.topologicalSort();
-        for (int task : result) {
-            cout << tasks[task] << endl;
+    int choice;
+    do {
+        cout << "\nMenu:\n";
+        cout << "1. Add Edge\n";
+        cout << "2. Delete Edge\n";
+        cout << "3. Check Acyclic\n";
+        cout << "4. Topological Sort\n";
+        cout << "5. Exit\n";
+        cout << "Enter your choice: ";
+        cin >> choice;
+
+        switch (choice) {
+            case 1: {
+                int from, to;
+                cout << "Enter edge to add (e.g., 2 3): ";
+                cin >> from >> to;
+                digraph.addEdge(from - 1, to - 1);
+                break;
+            }
+            case 2: {
+                int from, to;
+                cout << "Enter edge to delete (e.g., 2 3): ";
+                cin >> from >> to;
+                digraph.deleteEdge(from - 1, to - 1);
+                break;
+            }
+            case 3: {
+                if (digraph.isAcyclic()) {
+                    cout << "The graph is acyclic.\n";
+                } else {
+                    cout << "The graph has a cyclic dependency.\n";
+                }
+                break;
+            }
+            case 4: {
+                if (digraph.isAcyclic()) {
+                    cout << "Topological Sort Order:\n";
+                    list<int> result = digraph.topologicalSort();
+                    for (int task : result) {
+                        cout << tasks[task] << endl;
+                    }
+                } else {
+                    cout << "Cannot perform topological sort. The graph has a cyclic dependency.\n";
+                }
+                break;
+            }
+            case 5:
+                cout << "Exiting...\n";
+                break;
+            default:
+                cout << "Invalid choice. Please select a valid option.\n";
         }
-    } else {
-        cout << "The given tasks have a cyclic dependency. Cannot perform topological sort.\n";
-    }
+
+    } while (choice != 5);
 
     return 0;
 }
