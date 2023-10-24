@@ -102,6 +102,4 @@ License
 This code is provided under an open-source license. You are free to use and modify it as needed. See the LICENSE file for more details.
 
 Feel free to explore, adapt, and extend this code for your task management and dependency analysis needs. Enjoy using the program!
-## DEVELOPED BY MABON NINAN
-## MOHHAMED FAWWAAZ
-## MUHIB KHAN
+## DEVELOPED BY MABON NINAN, MOHHAMED FAWWAAZ, MUHIB KHAN
